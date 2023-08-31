@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" href="./favicon.png" />
+        <link rel="stylesheet" href="./style.css" />
+        <title>Gráfico de barras D3</title>
+    </head>
+    <body>
+        <!--Import D3 library-->
+        <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+        <!--FreeCodeCamp Test-->
+        <script src="https://cdn.freecodecamp.org/testable-projects-fcc/v1/bundle.js"></script>
+        <!--App bar chart with D3-->
+        <div id="app"></div>
+        <script> 
+        //SOLICITUD API
+            const getDatos = async () => {
+                const url = 'https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/GDP-data.json';
+                const res = await fetch( url );
+                const datos = await res.json();
+                return new Promise(( resolve, reject ) => {
+                  resolve( datos.data );
+              }
+            )}; 
+        //TITULO
+            d3.select( "#app" )
+            .append( "h1" )
+            .text( "Gráfico de barras" )
+            .attr( "id", "title" )
+            .style( "text-align", "center" );
+        //SUBTITULO
+            d3.select("#app")
+            .append("h3")
+            .text("USA GDP")
+            .attr("id", "subtitle")
+            .style("text-align", "center");
+
+        //SVG
+            const w = 1000;
+            const h = 500;
+            const padding = 60;
+
+            const svg = d3.select( "#app" )
+            .append( "svg" )
+            .attr( "width", w )
+            .attr( "height", h );
+
+            let tooltip = d3.select("body")
+              .append("div")
+              .attr("id", "tooltip")
+              .style("top", "300px")
+              .style("position", "absolute");
+            
+        //Llamada al dataset (API)
+            getDatos().then( ( datos ) => {
+        //Escalas
+              const xScale = d3.scaleTime()
+                  .domain([ d3.min( datos, ( d ) =>  new Date( d[0] ) ), 
+                    d3.max( datos, ( d ) =>  new Date( d[0] ) ) ])
+                  .range([ padding, w - padding ]);
+
+              const yScale = d3.scaleLinear()
+                  .domain([ 0, d3.max( datos, d => d[1] ) ])
+                  .range([ h - padding, padding ]);
+
+              const xRectScale = d3.scaleLinear()
+                  .domain([ d3.min( datos, ( d, i )=> i ),
+                   d3.max(  datos, (d, i )=> i ) ])
+                  .range([ padding, w - padding ]);
+        //AXIS
+              const xAxis = d3.axisBottom( xScale );
+
+              const yAxis = d3.axisLeft( yScale );
+              
+              svg.append("g")
+                  .attr("id", "x-axis")
+                  .attr("transform", "translate(0, " + (h - padding) + ")")
+                  .call( xAxis );
+
+              svg.append("g")
+                  .attr("id", "y-axis")
+                  .attr("transform", "translate(" + padding + ",0)")
+                  .call( yAxis );
+
+        //RECT
+              svg.selectAll( "rect" )
+              .data( datos )
+              .enter()
+              .append( "rect" )
+              .attr( "x", ( d, i ) =>  xRectScale( i ) )
+              .attr( "y", ( d, i ) => { return yScale ( d[1] ) } )
+              .attr( "width", 3.24 )
+              .attr( "height",( d, i )=>{ return h - yScale( d[1] ) - padding + "px" })
+              .attr( "fill", "blue" )
+              .attr( "class", "bar" )
+              .attr( "data-date", d => d[0] )
+              .attr( "data-gdp", d => d[1] )
+              .on('mouseover',( m, d ) => { 
+                console.log(d[0])
+                tooltip.transition()
+                .style("visibility", "visible")
+                .attr("data-date", d[0])
+                .text( d[0] + "\n" + d[1] )
+                .style("opacity", "0.8")
+                .attr("left", xRectScale(d) )
+              })
+              .on('mouseout', () => tooltip.transition()
+              .style("visibility", "hidden")
+              .style("opacity", 0));
+            //ETIQUETAS  
+
+            });
+        </script>
+        <footer>by 
+            <a href="https://github.com/axelpelcode" rel="noreferrer" target="_blank">Axelpelcode</a>
+        </footer>
+    </body>
+</html>

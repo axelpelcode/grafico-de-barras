@@ -1,0 +1,47 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #b1c9f9
+}
+#app{
+    margin: 0;
+    padding: 0;
+    background-color: #ebecef;
+    box-shadow: 1px 1px 5px 1px rgb(151, 151, 151);
+}
+#title, #subtitle{
+    color: rgb(13, 5, 57);
+    margin: 0;
+    padding: 0;
+    font-family: 'Courier New', Courier, monospace;
+    text-decoration: underline;
+    text-decoration-style: dotted;
+}
+svg {
+    background-color: #ebecef;
+    margin: 50px 0 0 0;
+    padding: 0px;
+}
+.bar{
+    display: inline-block;
+}
+#tooltip{
+    width:160px;
+    height:60px;
+    font-size: 20px;
+    background-color: #84abfa;
+    color:rgb(255, 255, 255);
+    text-align: center;
+    padding-top: 10px;
+    visibility: hidden;
+}
+.bar:hover {
+    fill: rgb(69, 69, 250);
+    }
+footer{
+    padding-top: 10px;
+    color:blue;
+    font-size: 12px;
+}
